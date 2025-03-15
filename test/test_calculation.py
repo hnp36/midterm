@@ -1,28 +1,15 @@
-'''Operations Testing Module'''
+"""Test module for calculation operations and functionality."""
 import pytest
-from calculator.operation import addition, multiplication, subtraction, division
+from calculator.calculation import Calculation
 
-def test_operation_addition():
-    '''Verify addition operation'''    
-    result = addition(5, 3)
-    assert result == 8
 
-def test_operation_subtraction():
-    '''Verify subtraction operation'''    
-    result = subtraction(10, 4)
-    assert result == 6
 
-def test_operation_multiplication():
-    '''Verify multiplication operation'''    
-    result = multiplication(5, 5)
-    assert result == 25
+def test_perform_operations(value1, value2, operation, expected_result):
+    """Test calculation operations with different inputs."""
+    calculation = Calculation(value1, value2, operation)
 
-def test_operation_division():
-    '''Verify division operation'''    
-    result = division(20, 4)
-    assert result == 5
-
-def test_division_by_zero():
-    """Test that division by zero raises ValueError"""
-    with pytest.raises(ValueError):
-        division(10, 0)
+    if expected_result == "ZeroDivisionError":
+        with pytest.raises(ValueError, match="Cannot divide by zero"):
+            calculation.perform()
+    else:
+        assert calculation.perform() == expected_result
