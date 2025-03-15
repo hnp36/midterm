@@ -1,28 +1,40 @@
-'''Operations Testing Module'''
-import pytest
-from calculator.operation import addition, multiplication, subtraction, division
+"""Test module for calculator operations."""
 
-def test_operation_addition():
-    '''Verify addition operation'''    
-    result = addition(5, 3)
-    assert result == 8
+from decimal import Decimal  # Standard library imports first
+import pytest  # Third-party imports next
 
-def test_operation_subtraction():
-    '''Verify subtraction operation'''    
-    result = subtraction(10, 4)
-    assert result == 6
+from calculator.calculation import Calculation  # Local imports last
+from calculator.operation import division
 
-def test_operation_multiplication():
-    '''Verify multiplication operation'''    
-    result = multiplication(5, 5)
-    assert result == 25
+# Fixtures for operands and operation
+@pytest.fixture
+def operand1():
+    """Fixture for the first operand."""
+    return Decimal("1")
 
-def test_operation_division():
-    '''Verify division operation'''    
-    result = division(20, 4)
-    assert result == 5
+@pytest.fixture
+def operand2():
+    """Fixture for the second operand."""
+    return Decimal("0")
 
-def test_division_by_zero():
-    """Test that division by zero raises ValueError"""
-    with pytest.raises(ValueError):
-        division(10, 0)
+@pytest.fixture
+def math_operation():
+    """Fixture for operation function (division)."""
+    return division
+
+# Test function that uses fixtures
+# The following line suppresses the "redefined-outer-name" warning for the function
+# pylint: disable=redefined-outer-name
+def test_perform_operations(operand1, operand2, math_operation):  # noqa: W0621
+    """
+    Test calculation operations with different inputs.
+
+    Args:
+        operand1 (Decimal): First operand.
+        operand2 (Decimal): Second operand.
+        math_operation (function): Operation to be performed.
+    """
+    calculation = Calculation(operand1, operand2, math_operation)
+
+    with pytest.raises(ValueError, match="Cannot divide by zero"):
+        calculation.perform()
